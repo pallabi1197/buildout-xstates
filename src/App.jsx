@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-
 function App() {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -11,13 +10,14 @@ function App() {
   const [selectCity, setSelectCity] = useState("");
 
   const countryAPI = "https://location-selector.labs.crio.do/countries";
- 
 
   useEffect(() => {
     const getCountryData = async () => {
       const response = await fetch(countryAPI);
       const countryData = await response.json();
       setCountries(countryData);
+      setStates([]);
+      setCities([]);
       setSelectState("");
       setSelectCity("");
     };
@@ -28,9 +28,12 @@ function App() {
   useEffect(() => {
     if (!selectCountry) return;
     const getStateData = async () => {
-      const response = await fetch(`https://location-selector.labs.crio.do/country=${selectCountry}/states`);
+      const response = await fetch(
+        `https://location-selector.labs.crio.do/country=${selectCountry}/states`,
+      );
       const stateData = await response.json();
       setStates(stateData);
+      setCities([]);
       setSelectCity("");
     };
 
@@ -38,15 +41,17 @@ function App() {
   }, [selectCountry]);
 
   useEffect(() => {
-    if (!selectCountry || !selectState) return;
+    if (!selectState) return;
     const getCityData = async () => {
-      const response = await fetch(`https://location-selector.labs.crio.do/country=${selectCountry}/state=${selectState}/cities`);
+      const response = await fetch(
+        `https://location-selector.labs.crio.do/country=${selectCountry}/state=${selectState}/cities`,
+      );
       const cityData = await response.json();
       setCities(cityData);
     };
 
     getCityData();
-  }, [selectCountry, selectState]);
+  }, [selectState]);
 
   return (
     <>
@@ -59,7 +64,7 @@ function App() {
             setSelectCountry(e.target.value);
           }}
         >
-          <option>Select Country</option>
+          <option value="">Select Country</option>
           {countries.map((country) => {
             return (
               <option key={country} value={country}>
@@ -77,14 +82,15 @@ function App() {
             setSelectState(e.target.value);
           }}
         >
-          <option>Select State</option>
-          {states && states.map((state) => {
-            return (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            );
-          })}
+          <option value="">Select State</option>
+          {states &&
+            states.map((state) => {
+              return (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              );
+            })}
         </select>
         <select
           disabled={!selectState}
@@ -94,14 +100,15 @@ function App() {
             setSelectCity(e.target.value);
           }}
         >
-          <option>Select City</option>
-          {cities && cities.map((city) => {
-            return (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            );
-          })}
+          <option value="">Select City</option>
+          {cities &&
+            cities.map((city) => {
+              return (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              );
+            })}
         </select>
       </div>
       <div style={{ textAlign: "center" }}>
