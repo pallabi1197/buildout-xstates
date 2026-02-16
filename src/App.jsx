@@ -13,13 +13,17 @@ function App() {
 
   useEffect(() => {
     const getCountryData = async () => {
-      const response = await fetch(countryAPI);
-      const countryData = await response.json();
-      setCountries(countryData);
-      setStates([]);
-      setCities([]);
-      setSelectState("");
-      setSelectCity("");
+      try {
+        const response = await fetch(countryAPI);
+        const countryData = await response.json();
+        setCountries(countryData);
+        setStates([]);
+        setCities([]);
+        setSelectState("");
+        setSelectCity("");
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     getCountryData();
@@ -28,13 +32,17 @@ function App() {
   useEffect(() => {
     if (!selectCountry) return;
     const getStateData = async () => {
-      const response = await fetch(
-        `https://location-selector.labs.crio.do/country=${selectCountry}/states`,
-      );
-      const stateData = await response.json();
-      setStates(stateData);
-      setCities([]);
-      setSelectCity("");
+      try {
+        const response = await fetch(
+          `https://location-selector.labs.crio.do/country=${selectCountry}/states`,
+        );
+        const stateData = await response.json();
+        setStates(stateData);
+        setCities([]);
+        setSelectCity("");
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     getStateData();
@@ -43,11 +51,15 @@ function App() {
   useEffect(() => {
     if (!selectState) return;
     const getCityData = async () => {
-      const response = await fetch(
-        `https://location-selector.labs.crio.do/country=${selectCountry}/state=${selectState}/cities`,
-      );
-      const cityData = await response.json();
-      setCities(cityData);
+      try {
+        const response = await fetch(
+          `https://location-selector.labs.crio.do/country=${selectCountry}/state=${selectState}/cities`,
+        );
+        const cityData = await response.json();
+        setCities(cityData);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     getCityData();
@@ -62,6 +74,12 @@ function App() {
           value={selectCountry}
           onChange={(e) => {
             setSelectCountry(e.target.value);
+            if (e.target.value == "") {
+              setStates([]);
+              setCities([]);
+              setSelectState("");
+              setSelectCity("");
+            }
           }}
         >
           <option value="">Select Country</option>
